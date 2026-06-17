@@ -1,20 +1,28 @@
-import { useDebugValue, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-const FollowMouse = () => {
-  //window.addEventListener(); //NO hay como colocarla aca un addEventListener porque se ejecutará cada vez que el componente se renderice, y no queremos eso, queremos que se ejecute solo cuando enabled cambie a true
+const FollowMouse = ({ positionX, positionY }) => {
+  return (
+    <div
+      style={{
+        position: "absolute",
+        width: "40px",
+        height: "40px",
+        borderRadius: "50%",
+        backgroundColor: "red",
+        pointerEvents: "none", // para que el div no interfiera con los eventos del mouse
+        left: "-20px",
+        top: "-20px",
+        transform: `translate(${positionX}px, ${positionY}px)`,
+      }}
+    />
+  );
+};
 
+function App() {
   const [enabled, setEnabled] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 }); //null que no tengo ese dato y por tanto controlar que no tengo ese dato
   //Buena practica es que inicializamos si es un string si es objeto con 2 parametros como arriba, buena idea que ya se inicialice con esto
 
-  useEffect(() => {
-    document.body.classList.toggle("no-cursor", enabled);
-    return () => {
-      document.body.classList.remove("no-cursor");
-    };
-  }, [enabled]);
-
-  //Efecto de pointer move
   //Este efecto se ejecutará cada vez que el valor de enabled cambie, y se encargará de agregar o eliminar el event listener para seguir el puntero del mouse
   useEffect(() => {
     console.log(`effect enabled: ${enabled}`);
@@ -46,38 +54,16 @@ const FollowMouse = () => {
     // cuando cambian las depdenecnias, antes de ejecutar el efecto de nuevo
     return () => {
       window.removeEventListener("pointermove", handleMouseMove);
-      console.log("cleanup ");
     };
   }, [enabled]); // [] para que se ejecute solo una vez al montar el componente
 
-  return (
-    <>
-      <div
-        style={{
-          position: "absolute",
-          width: "40px",
-          height: "40px",
-          borderRadius: "50%",
-          backgroundColor: "red",
-          pointerEvents: "none", // para que el div no interfiera con los eventos del mouse
-          left: "-20px",
-          top: "-20px",
-          transform: `translate(${position.x}px, ${position.y}px)`,
-        }}
-      />
-
-      <button onClick={() => setEnabled(!enabled)}>
-        {enabled ? "Desactivar" : "Activar"} Seguir Puntero
-      </button>
-    </>
-  );
-};
-
-function App() {
   //window.addEventListener(); //NO hay como colocarla aca un addEventListener porque se ejecutará cada vez que el componente se renderice, y no queremos eso, queremos que se ejecute solo cuando enabled cambie a true
   return (
     <main>
-      <FollowMouse></FollowMouse>
+      <FollowMouse positionX={position.x} positionY={position.y}></FollowMouse>
+      <button onClick={() => setEnabled(!enabled)}>
+        {enabled ? "Desactivar" : "Activar"} Seguir Puntero
+      </button>
     </main>
   );
 }

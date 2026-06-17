@@ -1,4 +1,4 @@
-import { useDebugValue, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const FollowMouse = () => {
   //window.addEventListener(); //NO hay como colocarla aca un addEventListener porque se ejecutará cada vez que el componente se renderice, y no queremos eso, queremos que se ejecute solo cuando enabled cambie a true
@@ -7,14 +7,6 @@ const FollowMouse = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 }); //null que no tengo ese dato y por tanto controlar que no tengo ese dato
   //Buena practica es que inicializamos si es un string si es objeto con 2 parametros como arriba, buena idea que ya se inicialice con esto
 
-  useEffect(() => {
-    document.body.classList.toggle("no-cursor", enabled);
-    return () => {
-      document.body.classList.remove("no-cursor");
-    };
-  }, [enabled]);
-
-  //Efecto de pointer move
   //Este efecto se ejecutará cada vez que el valor de enabled cambie, y se encargará de agregar o eliminar el event listener para seguir el puntero del mouse
   useEffect(() => {
     console.log(`effect enabled: ${enabled}`);
@@ -74,10 +66,15 @@ const FollowMouse = () => {
 };
 
 function App() {
+  const [mounted, setMounted] = useState(true);
+
   //window.addEventListener(); //NO hay como colocarla aca un addEventListener porque se ejecutará cada vez que el componente se renderice, y no queremos eso, queremos que se ejecute solo cuando enabled cambie a true
   return (
     <main>
-      <FollowMouse></FollowMouse>
+      {mounted && <FollowMouse></FollowMouse>}
+      <button onClick={() => setMounted(!mounted)}>
+        {mounted ? "Desmontar" : "Montar"} Componente Seguir Puntero
+      </button>
     </main>
   );
 }
